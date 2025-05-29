@@ -36,21 +36,49 @@ class SmsStateHandler(val context: Context, private val binding: ActivityPluginB
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private fun registerDeliveredReceiver() {
-        context.registerReceiver(
-            smsStateChangeReceiver,
-            IntentFilter("SMS_DELIVERED")
-        )
-    }
+    // @TargetApi(Build.VERSION_CODES.KITKAT)
+    // private fun registerDeliveredReceiver() {
+    //     context.registerReceiver(
+    //         smsStateChangeReceiver,
+    //         IntentFilter("SMS_DELIVERED")
+    //     )
+    // }
 
+    // @TargetApi(Build.VERSION_CODES.KITKAT)
+    // private fun registerSentReceiver() {
+    //     context.registerReceiver(
+    //         smsStateChangeReceiver,
+    //         IntentFilter("SMS_SENT")
+    //     )
+    // }
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    private fun registerSentReceiver() {
+   private fun registerDeliveredReceiver() {
+    val intentFilter = IntentFilter("SMS_DELIVERED")
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         context.registerReceiver(
             smsStateChangeReceiver,
-            IntentFilter("SMS_SENT")
+            intentFilter,
+            Context.RECEIVER_EXPORTED  
         )
+    } else {
+        context.registerReceiver(smsStateChangeReceiver, intentFilter)
     }
+}
+
+@TargetApi(Build.VERSION_CODES.KITKAT)
+private fun registerSentReceiver() {
+    val intentFilter = IntentFilter("SMS_SENT")
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        context.registerReceiver(
+            smsStateChangeReceiver,
+            intentFilter,
+            Context.RECEIVER_EXPORTED  
+        )
+    } else {
+        context.registerReceiver(smsStateChangeReceiver, intentFilter)
+    }
+}
+
 
     override fun onCancel(argument: Any?) {
         context.unregisterReceiver(smsStateChangeReceiver)
